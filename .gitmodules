@@ -1,3 +1,0 @@
-[submodule "torchgeometry_for_prost"]
-	path = torchgeometry_for_prost
-	url = git@github.com:ewoprager/torchgeometry_for_prost.git
