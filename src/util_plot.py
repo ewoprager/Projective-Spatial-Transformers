@@ -224,6 +224,7 @@ def plot_test_iter_comb(fig, proj_mov, proj_init_numpy0, target, det_size, norm_
     ax6.set_xlabel('iteration')
     ax6.grid()
 
+    plt.savefig("plot_test_iter_comb.png")
     plt.show(block=False)
     plt.pause(0.5)
     plt.clf()
@@ -291,6 +292,7 @@ def plot_test_iter(fig, proj_mov, proj_init_numpy0, target, det_size, norm_facto
     ax6.set_xlabel('iteration')
     ax6.grid()
 
+    plt.savefig("plot_test_iter.png")
     plt.show(block=False)
     plt.pause(1)
     plt.clf()
@@ -347,6 +349,7 @@ def plot_example_regi(fig, proj_mov, proj_init_numpy0, target, det_size, norm_fa
     ax6.set_xlabel('iteration')
     ax6.grid()
 
+    plt.savefig("plot_example_regi.png")
     plt.show(block=False)
     plt.pause(1)
     plt.clf()
@@ -379,6 +382,7 @@ def plot_realtest_iter(fig, proj_mov, proj_init_numpy0, target, det_size, norm_f
     ax3.imshow(target_numpy0)
     ax3.set_title('Target')
 
+    plt.savefig("plot_realtest_iter.png")
     plt.show(block=False)
     plt.pause(1)
     plt.clf()

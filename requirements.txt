@@ -12,7 +12,7 @@ pyparsing
 python-dateutil
 pytools
 scipy
-torch
-torchgeometry
-torchvision
+#torch==1.9.0
+#torchgeometry
+torchvision==0.8.1
 tqdm

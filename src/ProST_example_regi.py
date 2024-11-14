@@ -45,6 +45,7 @@ def main():
         target = target.reshape(BATCH_SIZE, 1, det_size, det_size)
         plt.imshow(target.detach().cpu().numpy()[0,0,:,:].reshape(det_size, det_size), cmap='gray')
         plt.title('target img')
+        plt.savefig("main.png")
         plt.show()
 
     # Use Pytorch SGD optimizer
