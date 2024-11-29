@@ -4,6 +4,7 @@ import torch.optim as optim
 import numpy as np
 import matplotlib.pyplot as plt
 
+from util import GeometryParameters
 from util import ncc, input_param, init_rtvec_test, gradncc
 from util_plot import plot_example_regi
 from module import ProST
@@ -20,7 +21,14 @@ def main():
     # Use Gradient-NCC similarity as loss function
     criterion_gradncc = gradncc
     # Calculate geometric parameters
-    param, det_size, _3D_vol, CT_vol, ray_proj_mov, corner_pt, norm_factor = input_param(CT_PATH, None, BATCH_SIZE)
+    # Pre-defined hard coded geometry
+    det_size = 128
+    geometry = GeometryParameters(src_det = 1020,
+                                  iso_center = 400,
+                                  det_size = det_size,
+                                  pix_spacing = 0.73 * 512 / det_size, #0.194*1536 / det_size
+                                  step_size = 1.75)
+    param, det_size, _3D_vol, CT_vol, ray_proj_mov, corner_pt, norm_factor = input_param(CT_PATH, None, BATCH_SIZE, geometry)
     # Initialize projection model
     projmodel = ProST(param).to(device)
 

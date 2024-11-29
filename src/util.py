@@ -7,7 +7,7 @@ import math
 import torchgeometry as tgm
 import nibabel as nib
 import nrrd
-import cv2
+from dataclasses import dataclass
 
 from posevec2mat import euler2mat
 
@@ -50,6 +50,14 @@ def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
+@dataclass
+class GeometryParameters:
+    src_det: int
+    iso_center: int
+    det_size: int
+    pix_spacing: int
+    step_size: int
+
 '''
 Defines ProST canonical geometries
 input:
@@ -64,7 +72,8 @@ output:
        corner_pt: 8 corner points of input volume
      norm_factor: translation normalization factor
 '''
-def input_param(CT_PATH, SEG_PATH: Union[str, None], BATCH_SIZE, vol_spacing = 2.33203125, ISFlip = False, device='cuda'):
+def input_param(CT_PATH, SEG_PATH: Union[str, None], BATCH_SIZE, geometry: GeometryParameters, vol_spacing=2.33203125,
+                ISFlip = False, device='cuda'):
     if CT_PATH.endswith('.nrrd'):
         CT_vol, _ = nrrd.read(CT_PATH)
     else:
@@ -84,29 +93,23 @@ def input_param(CT_PATH, SEG_PATH: Union[str, None], BATCH_SIZE, vol_spacing = 2
         CT_vol = np.flip(CT_vol, axis=2)
         _3D_vol = np.flip(_3D_vol, axis=2)
 
-    # Pre-defined hard coded geometry
-    src_det = 1020
-    iso_center = 400
-    det_size = 128
-    pix_spacing = 0.73 * 512 / det_size #0.194*1536 / det_size
-    step_size = 1.75
     vol_size = CT_vol.shape[0]
 
     norm_factor = (vol_size * vol_spacing / 2)
-    src = (src_det - iso_center) / norm_factor
-    det = -iso_center / norm_factor
-    pix_spacing = pix_spacing / norm_factor
-    step_size = step_size / norm_factor
+    src = (geometry.src_det - geometry.iso_center) / norm_factor
+    det = -geometry.iso_center / norm_factor
+    pix_spacing = geometry.pix_spacing / norm_factor
+    step_size = geometry.step_size / norm_factor
 
-    param = [src, det, pix_spacing, step_size, det_size]
+    param = [src, det, pix_spacing, step_size, geometry.det_size]
 
     CT_vol = tensor_exp2torch(CT_vol, BATCH_SIZE, device)
     _3D_vol = tensor_exp2torch(_3D_vol, BATCH_SIZE, device)
     corner_pt = create_cornerpt(BATCH_SIZE, device)
-    ray_proj_mov = np.zeros((det_size, det_size))
+    ray_proj_mov = np.zeros((geometry.det_size, geometry.det_size))
     ray_proj_mov = tensor_exp2torch(ray_proj_mov, BATCH_SIZE, device)
 
-    return param, det_size, _3D_vol, CT_vol, ray_proj_mov, corner_pt, norm_factor
+    return param, geometry.det_size, _3D_vol, CT_vol, ray_proj_mov, corner_pt, norm_factor
 
 
 def init_rtvec_train(BATCH_SIZE, device):
