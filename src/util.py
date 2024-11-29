@@ -1,10 +1,12 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from typing import Union
 import torch
 import torch.nn as nn
 import math
 import torchgeometry as tgm
 import nibabel as nib
+import nrrd
 import cv2
 
 from posevec2mat import euler2mat
@@ -62,11 +64,14 @@ output:
        corner_pt: 8 corner points of input volume
      norm_factor: translation normalization factor
 '''
-def input_param(CT_PATH, SEG_PATH, BATCH_SIZE, vol_spacing = 2.33203125, ISFlip = False, device='cuda'):
-    CT_vol = nib.load(CT_PATH)
-    _3D_vol = nib.load(SEG_PATH)
-    CT_vol = CT_vol.get_data()
-    _3D_vol = _3D_vol.get_data()
+def input_param(CT_PATH, SEG_PATH: Union[str, None], BATCH_SIZE, vol_spacing = 2.33203125, ISFlip = False, device='cuda'):
+    if CT_PATH.endswith('.nrrd'):
+        CT_vol, _ = nrrd.read(CT_PATH)
+    else:
+        CT_vol = nib.load(CT_PATH)
+        CT_vol = CT_vol.get_data()
+
+    _3D_vol = np.ones_like(CT_vol) if SEG_PATH is None else nib.load(SEG_PATH).get_data()
 
     # Rotation 90 degrees for making an AP view projection
     CT_vol = np.rot90(CT_vol, 3)

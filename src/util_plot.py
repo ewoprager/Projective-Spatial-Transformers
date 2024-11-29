@@ -3,6 +3,7 @@ import os
 import numpy as np
 import cv2
 import glob
+from typing import Union
 
 PI = 3.1415926
 
@@ -298,7 +299,7 @@ def plot_test_iter(fig, proj_mov, proj_init_numpy0, target, det_size, norm_facto
     plt.clf()
 
 def plot_example_regi(fig, proj_mov, proj_init_numpy0, target, det_size, norm_factor,\
-                   gradncc_sim_list, rtvec_diff_list):
+                   gradncc_sim_list, rtvec_diff_list, plot_filename: Union[str, None]=None):
     gradncc_sim_list_np = np.array(gradncc_sim_list)
     rtvec_diff_list_np = np.array(rtvec_diff_list)
 
@@ -349,7 +350,7 @@ def plot_example_regi(fig, proj_mov, proj_init_numpy0, target, det_size, norm_fa
     ax6.set_xlabel('iteration')
     ax6.grid()
 
-    plt.savefig("plot_example_regi.png")
+    plt.savefig("plot_example_regi.png" if plot_filename is None else plot_filename)
     plt.show(block=False)
     plt.pause(1)
     plt.clf()
